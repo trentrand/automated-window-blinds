@@ -1,0 +1,14 @@
+{
+  "name": "automated-window-blinds",
+  "version": "1.0.0",
+  "description": "Automate your window blinds with this home automation gadget",
+  "main": "src/index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Trent Rand <contact@trentrand.com>",
+  "license": "MIT",
+  "dependencies": {
+    "johnny-five": "^1.4.0"
+  }
+}

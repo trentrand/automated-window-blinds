@@ -1,41 +1,28 @@
-const {Board, Stepper} = require("johnny-five");
-const board = new Board();
+const { Board, Led } = require('johnny-five');
+const firmata = require('firmata');
 
-board.on("ready", () => {
+const VirtualSerialPort = require('udp-serial').SerialPort;
 
-  /**
-   * In order to use the Stepper class, your board must be flashed with
-   * either of the following:
-   *
-   * - AdvancedFirmata https://github.com/soundanalogous/AdvancedFirmata
-   * - ConfigurableFirmata https://github.com/firmata/arduino/releases/tag/v2.6.2
-   *
-   */
+const wirelessSerialPort = new VirtualSerialPort({
+  host: '192.168.1.251', // TODO: use bonjour to mitigate dynamic IP maintenance?
+  type: 'udp4',
+  port: 1025,
+});
 
-  const stepper = new Stepper({
-    type: Stepper.TYPE.FOUR_WIRE,
-    stepsPerRev: 200,
-    pins: {
-      motor1: 10,
-      motor2: 11,
-      motor3: 12,
-      motor4: 13,
-    }
-  });
+const io = new firmata.Board(wirelessSerialPort)
 
-  // Set stepper to 180 RPM, counter-clockwise with acceleration and deceleration
-  stepper.rpm(180).ccw().accel(1600).decel(1600);
+io.once('ready', () => {
+  console.log('Serial interface connected...');
+  io.isReady = true;
 
-  // Make 10 full revolutions
-  stepper.step(2000, () => {
+  const board = new Board({ io, repl: true });
+  const LED_PIN = 7;
 
-    console.log("Done moving CCW");
+  board.on("ready", () => {
+    console.log('Main board ready...');
+    board.isReady = true;
 
-    // once first movement is done, make 10 revolutions clockwise at previously
-    //      defined speed, accel, and decel by passing an object into stepper.step
-    stepper.step({
-      steps: 2000,
-      direction: Stepper.DIRECTION.CW
-    }, () => console.log("Done moving CW"));
+    const led = Led(LED_PIN);
+    led.blink(500);
   });
 });

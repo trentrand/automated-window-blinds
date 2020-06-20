@@ -4,11 +4,16 @@
   "description": "Automate your window blinds with this home automation gadget",
   "main": "src/index.js",
   "scripts": {
+    "start": "node src/index.js",
+    "debug": "DEBUG=HAP-NodeJS:* npm run start",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "Trent Rand <contact@trentrand.com>",
   "license": "MIT",
   "dependencies": {
-    "johnny-five": "^1.4.0"
+    "etherport-client": "^0.1.4",
+    "firmata": "^2.2.0",
+    "johnny-five": "^1.4.0",
+    "udp-serial": "^0.2.0"
   }
 }

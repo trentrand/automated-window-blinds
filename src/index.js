@@ -1,28 +1,22 @@
-const { Board, Led } = require('johnny-five');
-const firmata = require('firmata');
+const { Board, Led,Pin  } = require('johnny-five');
+const { EtherPortClient } = require('etherport-client');
 
-const VirtualSerialPort = require('udp-serial').SerialPort;
-
-const wirelessSerialPort = new VirtualSerialPort({
-  host: '192.168.1.251', // TODO: use bonjour to mitigate dynamic IP maintenance?
-  type: 'udp4',
-  port: 1025,
+var board = new Board({
+  port: new EtherPortClient({
+    host: '192.168.1.90', // TODO: use bonjour to mitigate dynamic IP maintenance?
+    port: 3030
+  }),
+  timeout: 1e5,
+  repl: false,
 });
 
-const io = new firmata.Board(wirelessSerialPort)
+board.on("ready", function() {
+  console.log("READY!");
+  board.isReady = true;
 
-io.once('ready', () => {
-  console.log('Serial interface connected...');
-  io.isReady = true;
 
-  const board = new Board({ io, repl: true });
-  const LED_PIN = 7;
-
-  board.on("ready", () => {
-    console.log('Main board ready...');
-    board.isReady = true;
-
-    const led = Led(LED_PIN);
-    led.blink(500);
-  });
+  const LED_PIN = 16;
+  board.pinMode(LED_PIN, Pin.OUTPUT);
+  const led = Led(LED_PIN);
+  led.blink(500);
 });
